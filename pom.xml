@@ -48,7 +48,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jackson.version>2.19.0</jackson.version>
         <junit.version>5.12.2</junit.version>
-        <postgresql.version>42.7.5</postgresql.version>
+        <postgresql.version>42.7.11</postgresql.version>
         <hikari.version>6.3.0</hikari.version>
         <flyway.version>11.8.2</flyway.version>
         <lettuce.version>6.5.5.RELEASE</lettuce.version>
