@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: {{ .Release.Name }}}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector: {matchLabels: {app: {{ .Release.Name }}}}
+  template:
+    metadata: {labels: {app: {{ .Release.Name }}}}
+    spec:
+      containers:
+        - name: chat
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports: [{name: http, containerPort: 8080}]
+          env:
+            - {name: REALTIMECHAT_ENVIRONMENT, value: {{ .Values.config.environment | quote }}}
+            - {name: REALTIMECHAT_OIDC_ISSUERS, value: {{ .Values.config.oidcIssuers | quote }}}
+            - {name: REALTIMECHAT_OIDC_AUDIENCE, value: {{ .Values.config.oidcAudience | quote }}}
+            - {name: REALTIMECHAT_ALLOWED_ORIGINS, value: {{ .Values.config.allowedOrigins | quote }}}
+          envFrom: [{secretRef: {name: {{ .Values.secretName }}}}]
+          readinessProbe: {httpGet: {path: /health/ready, port: http}}
+          livenessProbe: {httpGet: {path: /health/live, port: http}}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
