@@ -1,0 +1,55 @@
+openapi: 3.1.0
+info:
+  title: Real-Time Chat Server Management API
+  version: 2.0.0
+servers:
+  - url: https://chat.example.com/api/v2
+security:
+  - bearerAuth: []
+paths:
+  /me:
+    get:
+      parameters: [{$ref: '#/components/parameters/TenantId'}]
+      responses:
+        '200': {description: Authenticated tenant identity}
+  /messages:
+    get:
+      parameters:
+        - {$ref: '#/components/parameters/TenantId'}
+        - {name: roomId, in: query, required: true, schema: {type: string, format: uuid}}
+        - {name: afterMessageId, in: query, required: false, schema: {type: string, format: uuid}}
+      responses:
+        '200': {description: Authorized message page}
+  /rooms:
+    post:
+      parameters: [{$ref: '#/components/parameters/TenantId'}]
+      responses: {'200': {description: Room created}}
+  /tenant-memberships:
+    post:
+      parameters: [{$ref: '#/components/parameters/TenantId'}]
+      responses: {'200': {description: Membership updated}}
+  /room-memberships:
+    post:
+      parameters: [{$ref: '#/components/parameters/TenantId'}]
+      responses: {'200': {description: Room membership updated}}
+  /retention-policy:
+    post:
+      parameters: [{$ref: '#/components/parameters/TenantId'}]
+      responses: {'200': {description: Retention policy updated}}
+  /legal-holds:
+    post:
+      parameters: [{$ref: '#/components/parameters/TenantId'}]
+      responses: {'200': {description: Legal hold created}}
+  /message-tombstones:
+    post:
+      parameters: [{$ref: '#/components/parameters/TenantId'}]
+      responses: {'200': {description: Message tombstoned}}
+components:
+  securitySchemes:
+    bearerAuth: {type: http, scheme: bearer, bearerFormat: JWT}
+  parameters:
+    TenantId:
+      name: tenantId
+      in: query
+      required: true
+      schema: {type: string, format: uuid}
