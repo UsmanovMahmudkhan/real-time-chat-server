@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: realtimechat
+      POSTGRES_USER: realtimechat
+      POSTGRES_PASSWORD: local-development-only
+    ports: ["5432:5432"]
+  redis:
+    image: redis:7.4-alpine
+    ports: ["6379:6379"]
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2
+    command: start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: local-development-only
+    ports: ["8081:8080"]
