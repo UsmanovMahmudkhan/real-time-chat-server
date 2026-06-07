@@ -180,7 +180,7 @@ cp chat-server-war/target/real-time-chat-server.war "$CATALINA_BASE/webapps/"
 Container:
 
 ```bash
-docker build -t real-time-chat-server:2.0.0-SNAPSHOT .
+docker build -t real-time-chat-server:2.0.0 .
 ```
 
 Kubernetes:
@@ -200,9 +200,8 @@ SBOM generation, and GPG release signing configuration. Before publishing:
 1. Create the public GitHub repository referenced by the POM.
 2. Verify `io.github.usmanovmahmudkhan` in Central Portal.
 3. Configure Central credentials and a published GPG key.
-4. Replace `2.0.0-SNAPSHOT` with `2.0.0`.
-5. Run `mvn clean verify -Prelease`.
-6. Complete all enterprise release gates before making production claims.
+4. Run `mvn clean verify -Prelease`.
+5. Complete all enterprise release gates before making production claims.
 
 ## License
 
