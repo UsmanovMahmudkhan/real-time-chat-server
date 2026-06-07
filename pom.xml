@@ -51,7 +51,7 @@
         <postgresql.version>42.7.11</postgresql.version>
         <hikari.version>6.3.0</hikari.version>
         <flyway.version>11.8.2</flyway.version>
-        <lettuce.version>6.5.5.RELEASE</lettuce.version>
+        <lettuce.version>7.5.2.RELEASE</lettuce.version>
         <nimbus.version>10.3</nimbus.version>
         <micrometer.version>1.15.0</micrometer.version>
         <otel.version>1.50.0</otel.version>
