@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 2.0.0-SNAPSHOT - 2026-06-07
+## 2.0.0 - 2026-06-07
 
 - Converted the project to a multi-module enterprise architecture.
 - Added OIDC/JWT authentication with multiple approved issuers.
