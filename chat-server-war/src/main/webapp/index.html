@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Real-Time Chat Server Test Client</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        label { display: block; margin-top: 0.75rem; }
+        input { box-sizing: border-box; width: 100%; padding: 0.5rem; }
+        button { margin: 0.75rem 0.5rem 0 0; padding: 0.5rem 0.9rem; }
+        #messages { border: 1px solid #aaa; min-height: 12rem; margin-top: 1rem; padding: 0.75rem; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+<h1>Real-Time Chat Server Test Client</h1>
+
+<label for="serverPath">Server path</label>
+<input id="serverPath" value="ws://localhost:8080/real-time-chat-server/chat">
+
+<label for="room">Room</label>
+<input id="room" value="general" maxlength="50">
+
+<label for="username">Username</label>
+<input id="username" value="mahmud" maxlength="30">
+
+<button id="connect" type="button">Connect</button>
+<button id="disconnect" type="button">Disconnect</button>
+
+<label for="message">Message</label>
+<input id="message" maxlength="1000">
+<button id="send" type="button">Send</button>
+
+<div id="messages" aria-live="polite"></div>
+
+<script>
+    "use strict";
+
+    let socket;
+    const messages = document.getElementById("messages");
+
+    function display(text) {
+        const line = document.createElement("div");
+        line.textContent = text;
+        messages.appendChild(line);
+    }
+
+    document.getElementById("connect").addEventListener("click", () => {
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            display("Already connected");
+            return;
+        }
+
+        const path = document.getElementById("serverPath").value.replace(/\/$/, "");
+        const room = encodeURIComponent(document.getElementById("room").value);
+        const username = encodeURIComponent(document.getElementById("username").value);
+        socket = new WebSocket(`${path}/${room}/${username}`);
+        socket.addEventListener("open", () => display("Connected"));
+        socket.addEventListener("message", event => display(event.data));
+        socket.addEventListener("close", event => display(`Disconnected (${event.code})`));
+        socket.addEventListener("error", () => display("WebSocket error"));
+    });
+
+    document.getElementById("disconnect").addEventListener("click", () => {
+        if (socket) {
+            socket.close();
+        }
+    });
+
+    document.getElementById("send").addEventListener("click", () => {
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            display("Not connected");
+            return;
+        }
+
+        const content = document.getElementById("message").value;
+        socket.send(JSON.stringify({type: "CHAT", content}));
+    });
+</script>
+</body>
+</html>
