@@ -1,0 +1,19 @@
+name: verify
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    strategy:
+      matrix:
+        java: ["17", "21"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: "${{ matrix.java }}", cache: maven}
+      - run: mvn -B clean verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: war-java-${{ matrix.java }}
+          path: chat-server-war/target/real-time-chat-server.war
