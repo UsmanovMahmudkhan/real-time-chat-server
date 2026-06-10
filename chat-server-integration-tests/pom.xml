@@ -8,6 +8,9 @@
     </parent>
     <artifactId>chat-server-integration-tests</artifactId>
     <name>Real-Time Chat Server Integration Tests</name>
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
     <dependencies>
         <dependency><groupId>io.github.usmanovmahmudkhan</groupId><artifactId>chat-server-postgres</artifactId><version>${project.version}</version><scope>test</scope></dependency>
         <dependency><groupId>io.github.usmanovmahmudkhan</groupId><artifactId>chat-server-redis</artifactId><version>${project.version}</version><scope>test</scope></dependency>
