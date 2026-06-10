@@ -40,6 +40,30 @@ class ChatServerConfigTest {
         assertThrows(IllegalStateException.class, ChatServerConfig::load);
     }
 
+    @Test
+    void rejectsNonNumericIntegerSettingWithClearMessage() {
+        configure();
+        System.setProperty("realtimechat.max.message.length", "not-a-number");
+        try {
+            IllegalStateException failure = assertThrows(IllegalStateException.class, ChatServerConfig::load);
+            assertEquals("REALTIMECHAT_MAX_MESSAGE_LENGTH must be an integer between 1 and 100000",
+                    failure.getMessage());
+        } finally {
+            System.clearProperty("realtimechat.max.message.length");
+        }
+    }
+
+    @Test
+    void rejectsOutOfRangeIntegerSetting() {
+        configure();
+        System.setProperty("realtimechat.database.pool.size", "0");
+        try {
+            assertThrows(IllegalStateException.class, ChatServerConfig::load);
+        } finally {
+            System.clearProperty("realtimechat.database.pool.size");
+        }
+    }
+
     private void configure() {
         System.setProperty("realtimechat.environment", "test");
         System.setProperty("realtimechat.jdbc.url", "jdbc:postgresql://localhost/test");
