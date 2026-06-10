@@ -12,6 +12,11 @@ paths:
       parameters: [{$ref: '#/components/parameters/TenantId'}]
       responses:
         '200': {description: Authenticated tenant identity}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthenticated'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
   /messages:
     get:
       parameters:
@@ -20,30 +25,71 @@ paths:
         - {name: afterMessageId, in: query, required: false, schema: {type: string, format: uuid}}
       responses:
         '200': {description: Authorized message page}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthenticated'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
   /rooms:
     post:
       parameters: [{$ref: '#/components/parameters/TenantId'}]
-      responses: {'200': {description: Room created}}
+      responses:
+        '200': {description: Room created}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthenticated'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
   /tenant-memberships:
     post:
       parameters: [{$ref: '#/components/parameters/TenantId'}]
-      responses: {'200': {description: Membership updated}}
+      responses:
+        '200': {description: Membership updated}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthenticated'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
   /room-memberships:
     post:
       parameters: [{$ref: '#/components/parameters/TenantId'}]
-      responses: {'200': {description: Room membership updated}}
+      responses:
+        '200': {description: Room membership updated}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthenticated'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
   /retention-policy:
     post:
       parameters: [{$ref: '#/components/parameters/TenantId'}]
-      responses: {'200': {description: Retention policy updated}}
+      responses:
+        '200': {description: Retention policy updated}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthenticated'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
   /legal-holds:
     post:
       parameters: [{$ref: '#/components/parameters/TenantId'}]
-      responses: {'200': {description: Legal hold created}}
+      responses:
+        '200': {description: Legal hold created}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthenticated'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
   /message-tombstones:
     post:
       parameters: [{$ref: '#/components/parameters/TenantId'}]
-      responses: {'200': {description: Message tombstoned}}
+      responses:
+        '200': {description: Message tombstoned}
+        '400': {$ref: '#/components/responses/BadRequest'}
+        '401': {$ref: '#/components/responses/Unauthenticated'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+        '500': {$ref: '#/components/responses/InternalError'}
 components:
   securitySchemes:
     bearerAuth: {type: http, scheme: bearer, bearerFormat: JWT}
@@ -53,3 +99,29 @@ components:
       in: query
       required: true
       schema: {type: string, format: uuid}
+  schemas:
+    Problem:
+      type: object
+      description: RFC 9457 problem details
+      properties:
+        type: {type: string, format: uri}
+        title: {type: string}
+        status: {type: integer}
+        detail: {type: string}
+        correlationId: {type: string}
+  responses:
+    BadRequest:
+      description: Request parameters or body are invalid
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    Unauthenticated:
+      description: Bearer token is missing, invalid, or maps to no active identity
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    Forbidden:
+      description: Authenticated identity lacks permission for the tenant, room, or action
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    RateLimited:
+      description: Distributed rate limit exceeded
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
+    InternalError:
+      description: Unexpected server failure; details are logged with the correlationId
+      content: {application/problem+json: {schema: {$ref: '#/components/schemas/Problem'}}}
