@@ -41,6 +41,10 @@
         <url>https://github.com/usmanovmahmudkhan/real-time-chat-server</url>
         <tag>HEAD</tag>
     </scm>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/usmanovmahmudkhan/real-time-chat-server/issues</url>
+    </issueManagement>
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
