@@ -90,7 +90,12 @@ public record ChatServerConfig(
 
     private static int integer(String name, int fallback, int minimum, int maximum) {
         String value = value(name);
-        int parsed = value == null ? fallback : Integer.parseInt(value);
+        int parsed;
+        try {
+            parsed = value == null ? fallback : Integer.parseInt(value.trim());
+        } catch (NumberFormatException exception) {
+            throw new IllegalStateException(name + " must be an integer between " + minimum + " and " + maximum);
+        }
         if (parsed < minimum || parsed > maximum) {
             throw new IllegalStateException(name + " must be between " + minimum + " and " + maximum);
         }
