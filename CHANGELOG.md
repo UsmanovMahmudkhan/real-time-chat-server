@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.1 - 2026-06-10
+
+- Pinned Netty to 4.2.15.Final (above the version managed by Lettuce) to fix
+  CVE-2026-44249, CVE-2026-45416, CVE-2026-45674, and CVE-2026-47691 in the
+  transitive `netty-handler` and `netty-resolver-dns` dependencies.
+
 ## 2.1.0 - 2026-06-10
 
 - Management API now returns accurate HTTP statuses: 401 for authentication

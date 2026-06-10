@@ -6,7 +6,7 @@
 
     <groupId>io.github.usmanovmahmudkhan</groupId>
     <artifactId>real-time-chat-server-parent</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
     <packaging>pom</packaging>
 
     <name>Real-Time Chat Server Parent</name>
@@ -56,6 +56,9 @@
         <hikari.version>6.3.0</hikari.version>
         <flyway.version>11.8.2</flyway.version>
         <lettuce.version>7.5.2.RELEASE</lettuce.version>
+        <!-- Pinned above the Lettuce-managed 4.2.13.Final to clear
+             CVE-2026-44249/45416/45674/47691 until Lettuce updates. -->
+        <netty.version>4.2.15.Final</netty.version>
         <nimbus.version>10.3</nimbus.version>
         <micrometer.version>1.15.0</micrometer.version>
         <otel.version>1.50.0</otel.version>
@@ -75,6 +78,13 @@
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

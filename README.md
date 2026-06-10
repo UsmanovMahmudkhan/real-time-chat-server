@@ -26,14 +26,14 @@ Maven:
 <dependency>
     <groupId>io.github.usmanovmahmudkhan</groupId>
     <artifactId>chat-server-core</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
 </dependency>
 ```
 
 Gradle:
 
 ```gradle
-implementation 'io.github.usmanovmahmudkhan:chat-server-core:2.1.0'
+implementation 'io.github.usmanovmahmudkhan:chat-server-core:2.1.1'
 ```
 
 Published artifacts:
@@ -219,7 +219,7 @@ cp chat-server-war/target/real-time-chat-server.war "$CATALINA_BASE/webapps/"
 Container:
 
 ```bash
-docker build -t real-time-chat-server:2.1.0 .
+docker build -t real-time-chat-server:2.1.1 .
 ```
 
 Kubernetes:
@@ -233,7 +233,7 @@ provider are never bundled into production packaging.
 
 ## Releasing to Maven Central
 
-Version 2.1.0 is live on
+Version 2.1.1 is live on
 [Maven Central](https://central.sonatype.com/namespace/io.github.usmanovmahmudkhan)
 and resolvable from
 [repo1.maven.org](https://repo1.maven.org/maven2/io/github/usmanovmahmudkhan/).
