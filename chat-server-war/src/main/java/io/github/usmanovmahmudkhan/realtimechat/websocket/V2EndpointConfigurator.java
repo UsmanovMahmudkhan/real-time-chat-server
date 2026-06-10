@@ -18,10 +18,13 @@ public final class V2EndpointConfigurator extends ServerEndpointConfig.Configura
 
     @Override
     public boolean checkOrigin(String originHeaderValue) {
-        ChatRuntime runtime = ChatRuntime.get();
         if (originHeaderValue == null) {
-            return runtime.config().allowMissingOrigin();
+            return ChatRuntime.get().config().allowMissingOrigin();
         }
+        return isWellFormedHttpsOrigin(originHeaderValue);
+    }
+
+    static boolean isWellFormedHttpsOrigin(String originHeaderValue) {
         try {
             URI origin = URI.create(originHeaderValue);
             return "https".equalsIgnoreCase(origin.getScheme()) && origin.getHost() != null
@@ -50,7 +53,7 @@ public final class V2EndpointConfigurator extends ServerEndpointConfig.Configura
         }
     }
 
-    private static UUID tenantFromPath(String path) {
+    static UUID tenantFromPath(String path) {
         String[] parts = path.split("/");
         for (int index = 0; index < parts.length - 1; index++) {
             if ("tenants".equals(parts[index])) {
