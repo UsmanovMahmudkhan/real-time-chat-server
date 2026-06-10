@@ -2,5 +2,5 @@ apiVersion: v2
 name: real-time-chat-server
 description: Enterprise Jakarta WebSocket chat server
 type: application
-version: 2.0.0
-appVersion: "2.0.0"
+version: 2.1.0
+appVersion: "2.1.0"
