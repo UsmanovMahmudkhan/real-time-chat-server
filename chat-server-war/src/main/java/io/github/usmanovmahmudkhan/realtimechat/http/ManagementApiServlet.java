@@ -1,10 +1,13 @@
 package io.github.usmanovmahmudkhan.realtimechat.http;
 
+import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.usmanovmahmudkhan.realtimechat.core.domain.AuthenticatedUser;
+import io.github.usmanovmahmudkhan.realtimechat.core.protocol.ErrorCode;
 import io.github.usmanovmahmudkhan.realtimechat.core.protocol.ProtocolException;
 import io.github.usmanovmahmudkhan.realtimechat.core.util.UuidV7;
+import io.github.usmanovmahmudkhan.realtimechat.observability.StructuredLog;
 import io.github.usmanovmahmudkhan.realtimechat.runtime.ChatRuntime;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -44,11 +47,15 @@ public final class ManagementApiServlet extends HttpServlet {
             }
             problem(response, HttpServletResponse.SC_NOT_FOUND, "not-found", "Resource not found", correlationId);
         } catch (ProtocolException exception) {
-            problem(response, HttpServletResponse.SC_FORBIDDEN, exception.code().name(),
+            problem(response, statusFor(exception.code()), exception.code().name(),
                     exception.getMessage(), correlationId);
         } catch (IllegalArgumentException exception) {
             problem(response, HttpServletResponse.SC_BAD_REQUEST, "invalid-request",
                     "Request parameters are invalid", correlationId);
+        } catch (RuntimeException exception) {
+            StructuredLog.error("management_request_failed", Map.of("correlationId", correlationId), exception);
+            problem(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "internal-error",
+                    "The request could not be processed", correlationId);
         }
     }
 
@@ -96,19 +103,34 @@ public final class ManagementApiServlet extends HttpServlet {
             }
             writeJson(response, HttpServletResponse.SC_OK, result);
         } catch (ProtocolException exception) {
-            problem(response, HttpServletResponse.SC_FORBIDDEN, exception.code().name(),
+            problem(response, statusFor(exception.code()), exception.code().name(),
                     exception.getMessage(), correlationId);
-        } catch (Exception exception) {
+        } catch (IllegalArgumentException | NullPointerException | JacksonException exception) {
             problem(response, HttpServletResponse.SC_BAD_REQUEST, "invalid-request",
                     "Request body is invalid", correlationId);
+        } catch (Exception exception) {
+            StructuredLog.error("management_request_failed", Map.of("correlationId", correlationId), exception);
+            problem(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "internal-error",
+                    "The request could not be processed", correlationId);
         }
+    }
+
+    static int statusFor(ErrorCode code) {
+        return switch (code) {
+            case UNAUTHENTICATED -> HttpServletResponse.SC_UNAUTHORIZED;
+            case UNAUTHORIZED, TENANT_MISMATCH -> HttpServletResponse.SC_FORBIDDEN;
+            case RATE_LIMITED -> 429;
+            case INVALID_EVENT, INVALID_MESSAGE -> HttpServletResponse.SC_BAD_REQUEST;
+            case DUPLICATE_REQUEST -> HttpServletResponse.SC_CONFLICT;
+            case SERVICE_UNAVAILABLE -> HttpServletResponse.SC_SERVICE_UNAVAILABLE;
+            case INTERNAL_ERROR -> HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+        };
     }
 
     private AuthenticatedUser authenticate(HttpServletRequest request, UUID tenantId) {
         AuthenticatedUser user = ChatRuntime.get().authenticator().authenticate(request.getHeader("Authorization"), tenantId);
         if (!ChatRuntime.get().sessions().allowRestRequest(user)) {
-            throw new ProtocolException(io.github.usmanovmahmudkhan.realtimechat.core.protocol.ErrorCode.RATE_LIMITED,
-                    "REST rate limit exceeded");
+            throw new ProtocolException(ErrorCode.RATE_LIMITED, "REST rate limit exceeded");
         }
         return user;
     }
