@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.0 - 2026-06-10
+
+- Management API now returns accurate HTTP statuses: 401 for authentication
+  failures, 429 for rate limits, 409 for duplicate requests, 503/500 for
+  server-side failures (previously every protocol error returned 403, and
+  internal failures were mislabeled as 400). Documented the error contract in
+  `docs/openapi.yaml`.
+- Internal management API failures are now logged with the correlation id
+  instead of being silently reported as client errors.
+- Configuration loading rejects non-numeric integer settings with a clear
+  message instead of an unexplained `NumberFormatException`.
+- Added `issueManagement` to the parent POM so Maven Central links to the
+  GitHub issue tracker.
+- The Central publisher now excludes `chat-server-integration-tests` from the
+  upload bundle via `excludeArtifacts`; the module also skips GitHub Packages
+  deployment.
+- README gained Maven Central badges, installation snippets, a published
+  artifact matrix, and contribution/support links.
+- Added unit tests for the WebSocket handshake origin validation and tenant
+  path extraction, and for the management API status mapping.
+
 ## 2.0.0 - 2026-06-07
 
 - Converted the project to a multi-module enterprise architecture.
