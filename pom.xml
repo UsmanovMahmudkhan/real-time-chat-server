@@ -183,6 +183,11 @@
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>false</autoPublish>
                             <waitUntil>validated</waitUntil>
+                            <!-- The Testcontainers harness must never reach Central; the plugin
+                                 bundles the whole reactor and ignores maven.deploy.skip. -->
+                            <excludeArtifacts>
+                                <excludeArtifact>chat-server-integration-tests</excludeArtifact>
+                            </excludeArtifacts>
                         </configuration>
                     </plugin>
                     <plugin>
